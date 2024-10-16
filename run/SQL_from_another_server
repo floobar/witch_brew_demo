@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# $1 : target TNS entry 
+# $2 : SQL
+
+
+remote_user='<your_os_user>'
+remote_server='<your_server_name>'
+remote_oracle_sid='<your_oracle_env>'
+
+
+ssh -q ${remote_user}@${remote_server} << EOF
+
+export ORACLE_SID='${remote_oracle_sid}'
+export PATH=/usr/local/bin:$PATH
+ORAENV_ASK_SAV=$ORAENV_ASK
+export ORAENV_ASK=NO
+. /usr/local/bin/oraenv > /dev/null
+
+echo "${2}" | sqlplus -L -s /@${1}
+
+EOF
+
+exit 0
+

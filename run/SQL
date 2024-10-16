@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# $1 : target TNS entry
+# $2 : SQL
+
+if echo ${1} | egrep -qi 'admin|sys'	  
+then
+  auth_mode='as sysdba'
+fi
+
+
+export LD_LIBRARY_PATH=/usr/lib/oracle/23/client64
+
+${LD_LIBRARY_PATH}/bin/sqlplus -L -S /@${1} ${auth_mode} << EOF
+
+set lines 250 pages 180
+
+col EVENT_TIMESTAMP format a35
+col DBUSERNAME format a13
+col ACTION_NAME format a15
+col OBJECT_SCHEMA format a15
+col OBJECT_NAME format a15
+col SQL_TEXT format a90
+
+col USERNAME format a10
+col LAST_STARTED_ON format a35
+col LAST_STOPPED_ON format a35
+
+col CLIENT_PROGRAM format a35
+col IP_ADDRESS format a10
+
+col GENERATED_ON format a35
+ 
+
+${2}
+EOF
+
+exit 0
+
